@@ -1,0 +1,6 @@
+word,llm_features_count,human_features_count,semantic_cosine_similarity
+anchor,20,14,0.0
+apple,20,19,0.0
+apron,20,13,0.0
+cherry,20,12,0.0
+sofa,20,18,0.0
