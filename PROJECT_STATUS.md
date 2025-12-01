@@ -5,32 +5,22 @@
 
 ---
 
-## What This Project Does
+## Current Project
 
-This is a computational model that simulates how the brain processes spoken words. Specifically, it models the **N400** - a brain response that happens about 400ms after hearing a word, which reflects how surprising or expected that word is.
+A hierarchical predictive model that simulates the processesing of spoken words. Specifically, it models the **N400** and surprisal.
 
-### The Core Idea
+### Premise
 
-When you hear a word, your brain is constantly predicting what comes next. If you hear "dog" and then "cat", there's a small surprise (they're related but different). If you hear "dog" and then "table", there's a bigger surprise (unrelated). This surprise shows up as the N400 in EEG/MEG experiments.
+We compare neural data from a semantic priming task and a predictive coding model to see if the model predicts the same pattern of effects across noisy and clear audio conditions.
 
 ---
 
 ## Current Status: Working Model
 
-We have a **fully functional model** that:
-
-1. Takes audio input (Wav2Vec embeddings of spoken words)
+1. Takes audio input (Wav2Vec embeddings of spoken words) decomposed into phonemes
 2. Processes it through a 3-layer predictive coding network
 3. Generates simulated N400 responses
 4. Matches the expected pattern from human experiments
-
-### What We've Validated
-
-| Finding | Status |
-|---------|--------|
-| Repetition priming reduces N400 | ✓ Working |
-| Semantic mismatch increases N400 | ✓ Working |
-| Noise disrupts the N400 pattern | ✓ Working |
 
 ---
 
@@ -48,7 +38,7 @@ We have a **fully functional model** that:
 - 300 continuous dimensions
 - Dense, distributional representations
 
-**Both models show the same qualitative pattern**, which suggests the core finding is robust.
+**Both models show the same qualitative pattern**
 
 ---
 
@@ -94,7 +84,7 @@ The pattern flattens because the model can't recognize the noisy word, so it can
 
 ## Connection to Will's Experiment
 
-This model was designed to simulate findings from Will's auditory priming study:
+This model was designed to simulate findings from Zumchak et al.'s (2025) auditory priming study:
 
 - **2x2 design**: Semantic similarity × Auditory clarity
 - **Key finding**: In distorted speech, N400 differences disappear, but behavioral ratings may still show priming
@@ -103,7 +93,7 @@ The model captures the N400 pattern. Next step could be adding an "intelligibili
 
 ---
 
-## Files You Need to Know
+## Files
 
 | File | Purpose |
 |------|---------|
@@ -129,33 +119,15 @@ The phoneme vectors are pre-computed and stored in `audio_phonemes/PC_Input_Vect
 
 ---
 
-## What's Next?
-
-Potential extensions:
+## Potential extensions:
 
 1. **Add sentential context**: Instead of single-word primes, use sentence context
-2. **Model intelligibility ratings**: Add a behavioral metric alongside N400
-3. **Parameter fitting**: Fit model parameters to match real EEG data
-4. **Compare to experimental data**: Validate against Will's actual results
-
----
-
-## Questions?
-
-The code is documented and should be readable. Key concepts:
-
-- **Prediction error**: Difference between expected and actual activation
-- **Precision**: How much weight to give the input signal
-- **Semantic expectation**: What the model "expects" after the prime
-
-Feel free to reach out if anything is unclear.
+2. **Compare to experimental data**: Validate against Zumchak et al.'s (2025) results
 
 ---
 
 ## Technical Notes
 
-- Runs on GPU (CUDA) if available, falls back to CPU
 - Tested on NVIDIA RTX 3090
-- Python 3.10, PyTorch 2.x
-- About 800 words in the lexicon, 1600+ audio files (clear + noisy)
+- ~ 800 words in the lexicon, 1600+ audio files (clear + noisy)
 
