@@ -13,8 +13,8 @@ Can a predictive coding model explain the pattern of N400 responses in auditory 
 ### Key Finding
 
 The model successfully demonstrates:
-- **Repetition priming** reduces N400 (Same word: lowest prediction error)
-- **Semantic mismatch** increases N400 (Different words: higher prediction error)
+- **Repetition priming** reduces N400 response (Same word: lowest prediction error)
+- **Semantic mismatch** increases N400 response (Different words: higher prediction error)
 - **Noise disrupts priming** (Degraded speech abolishes the N400 difference across conditions)
 
 ## Project Structure
