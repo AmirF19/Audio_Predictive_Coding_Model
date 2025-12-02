@@ -1,6 +1,6 @@
 # Predictive Coding Model of Audio Input & N400
 
-A computational model simulating the N400 ERP component during auditory word recognition, based on hierarchical predictive coding principles.
+A hierarchical predictive computational model simulating the N400 ERP component during auditory word recognition.
 
 ## Overview
 
