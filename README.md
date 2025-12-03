@@ -10,12 +10,13 @@ This project implements a predictive coding model adapted from Nour Eddine et al
 
 Can a predictive coding model explain the pattern of N400 responses in auditory priming, particularly when speech is degraded (noisy)?
 
-### Key Finding
+### Key Findings
 
 The model successfully demonstrates:
 - **Repetition priming** reduces N400 response (Same word: lowest prediction error)
 - **Semantic mismatch** increases N400 response (Different words: higher prediction error)
 - **Noise disrupts priming** (Degraded speech abolishes the N400 difference across conditions)
+- **Similar > Dissimilar**: Semantically similar words show slightly higher N400 than dissimilar words, possibly due to lexical competition
 
 ## Project Structure
 
@@ -29,11 +30,7 @@ comp_ling_project/
 │   └── results/                       # Output files
 │
 ├── Predictive_Coding_Model_Word2Vec/  # Alternative model (Word2Vec semantics)
-│   ├── config.py
-│   ├── data_loader.py
-│   ├── pc_model.py
-│   ├── simulation.py
-│   └── results/
+│   └── (same structure)
 │
 ├── audio_phonemes/                    # Audio processing pipeline
 │   ├── PC_Input_Vectors/              # Wav2Vec phoneme embeddings (.npy)
@@ -42,7 +39,7 @@ comp_ling_project/
 │   └── MFA_Output_TextGrids/          # Forced alignment data
 │
 ├── outputs/                           # Semantic feature data
-│   └── semantic_features_model_input.json  # Llama-generated features
+│   └── semantic_features_model_input.json
 │
 └── my_800_words.csv                   # Lexicon
 ```
@@ -91,12 +88,10 @@ Input Layer (Phoneme)     →    Hidden Layer (Lexical)    →    Top Layer (Sem
 ### Setup
 
 ```bash
-# Create virtual environment
 python -m venv venv
 venv\Scripts\activate  # Windows
 source venv/bin/activate  # Linux/Mac
 
-# Install dependencies
 pip install torch numpy pandas matplotlib tqdm
 
 # For Word2Vec version
@@ -121,30 +116,44 @@ python simulation.py
 
 ### Output
 
-- `results/simulation_results.csv`: Trial-level data
-- `results/n400_results.png`: Visualization of results
+Results are saved to `results/simulation_results.csv` with the following columns:
+
+| Column | Description |
+|--------|-------------|
+| prime, target | Words presented |
+| clarity | clear or noisy |
+| prime_correct | Did model recognize the prime? |
+| prime_predicted | What word model thought prime was |
+| target_correct | Did model recognize the target? |
+| target_predicted | What word model thought target was |
+| target_prob | Probability assigned to correct word |
+| max_target_activation | Peak activation of correct word (accuracy measure) |
+| max_winner_activation | Peak activation of winning word (intelligibility proxy) |
+| n400_mean | Average semantic prediction error |
+| semantic_sim | Cosine similarity between expected and actual semantics |
 
 ## Results Summary
 
-### Llama Semantics Model
+### Llama Semantics Model (13,009 sparse features)
 
 | Condition | Clear N400 | Noisy N400 | Clear Accuracy |
 |-----------|------------|------------|----------------|
 | Same | 0.133 | 0.184 | 90% |
-| Similar | 0.327 | 0.204 | 84% |
+| Similar | 0.327 | 0.203 | 84% |
 | Dissimilar | 0.303 | 0.200 | 90% |
 
-### Word2Vec Model
+### Word2Vec Model (300 dense dimensions)
 
 | Condition | Clear N400 | Noisy N400 | Clear Accuracy |
 |-----------|------------|------------|----------------|
 | Same | 0.013 | 0.019 | 90% |
-| Similar | 0.026 | 0.021 | 91% |
+| Similar | 0.026 | 0.020 | 91% |
 | Dissimilar | 0.024 | 0.020 | 90% |
 
 Both models show:
 - Priming effect in clear speech (Same < Similar/Dissimilar)
-- Abolished priming in noisy speech (flat pattern)
+- Abolished priming in noisy speech (flat pattern across conditions)
+- Recognition drops to ~2.5% in noisy condition
 
 ## Key Parameters
 
@@ -156,6 +165,10 @@ Both models show:
 | SEMANTIC_PERSISTENCE | 0.8 | Priming strength (0-1) |
 | PRECISION_CLEAR | 1.0 | Input precision for clear speech |
 | PRECISION_NOISY | 1.0 | Input precision for noisy speech |
+
+## Notes on Phoneme Alignment
+
+The phoneme vectors were extracted using Wav2Vec 2.0 with Montreal Forced Aligner for segmentation. Some phonemes (especially stops like /t/ and flaps) may appear reduced in the individual segments due to coarticulation and unreleased consonants. The model handles this well, recognizing phonemes despite acoustic reduction.
 
 ## Data Sources
 
@@ -173,7 +186,4 @@ Nour Eddine, S., Brothers, T., Wang, L., Spratling, M., & Kuperberg, G. R. (2024
 Alba Jorquera, Muhammad Fusenig, William Zumchak  
 University of Maryland, Ling 848A - Computational Linguistics Seminar w/ Philip Resnik
 
-## License
-
-MIT License
 

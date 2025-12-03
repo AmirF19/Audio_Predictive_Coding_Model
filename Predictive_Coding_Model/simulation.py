@@ -143,6 +143,7 @@ def run_trial(model, prime, target, condition, lexicon):
     
     model.store_semantic_expectation()
     prime_winner, _ = model.get_winner_info()
+    prime_predicted = lexicon[prime_winner] if 0 <= prime_winner < len(lexicon) else "UNKNOWN"
     
     # Target phase
     model.prepare_for_target()
@@ -153,19 +154,35 @@ def run_trial(model, prime, target, condition, lexicon):
         return None
     
     n400_trace = []
+    target_activation_trace = []
+    winner_activation_trace = []
     for _ in range(MAX_STEPS):
         model.step(input_target, precision)
         n400_trace.append(model.get_semantic_prediction_error())
+        # Track target word activation
+        target_activation_trace.append(model.state_lexical[target_idx].item())
+        # Track max activation (whatever word is winning)
+        winner_activation_trace.append(model.state_lexical.max().item())
     
     metrics = model.get_metrics(target_idx)
+    target_winner = metrics['winner_idx']
+    target_predicted = lexicon[target_winner] if 0 <= target_winner < len(lexicon) else "UNKNOWN"
+    
+    # Max activations
+    max_target_activation = max(target_activation_trace)
+    max_winner_activation = max(winner_activation_trace)  # Intelligibility proxy (correct or not)
     
     return {
         'prime': prime,
         'target': target,
         'clarity': condition,
         'prime_correct': (prime_winner == prime_idx),
+        'prime_predicted': prime_predicted,
         'target_correct': metrics['correct'],
+        'target_predicted': target_predicted,
         'target_prob': metrics['target_prob'],
+        'max_target_activation': max_target_activation,
+        'max_winner_activation': max_winner_activation,
         'n400_mean': np.mean(n400_trace),
         'n400_peak': np.max(n400_trace),
         'n400_final': n400_trace[-1],
