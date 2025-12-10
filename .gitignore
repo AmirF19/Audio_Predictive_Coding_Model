@@ -42,3 +42,9 @@ word2vec-google-news-300/
 # Logs
 *.log
 
+# Model results (generated output)
+Predictive_Coding_Model_Aligned/results_aligned/
+Predictive_Coding_Model/results_samer/
+**/results_*/*.csv
+**/results_*/*.png
+
