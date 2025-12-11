@@ -1,0 +1,95 @@
+Methods (Draft for Publication)
+===============================
+
+Semantic Feature Generation (McRae-Inspired, LLM-Based)
+------------------------------------------------------
+We derived binary semantic attribute vectors for the full lexicon (~800 words) using large language models (LLMs), following McRae-style norms while avoiding leakage from the original dataset.
+
+Prompting strategy.
+- We first tested a general McRae-style prompt (slightly modified instructions) and obtained a mean cosine similarity of ~0.65 against held-out human norms.
+- To improve category coverage and reduce leakage, we used a two-step, category-specific prompting scheme:
+  1) Sense/category assignment: Each word was assigned a WordNet synset (NLTK), with manual spot checks to ensure correct word sense.
+  2) Category-specific few-shot prompts: For each category, we built a 5-shot prompt using category exemplars (excluding the target word) with human-generated attributes, then asked the LLM to produce attributes for the target. We tested multiple LLM variants and selected the prompt/model combination that maximized mean cosine similarity within each category.
+- Outcome: Most categories showed higher cosine similarity with specialized prompts than with the general prompt; a few categories showed minimal gains (caveats noted).
+
+Attribute set and encoding.
+- Attributes produced across all categories were pooled and deduplicated (N ≈ 20,533).
+- Each word is represented by a binary vector of length N (1 if attribute present).
+- The final feature file used by the model is semantics_alignment/category_prompts/output/all_words_model_input.json.
+
+Deviation from original norms.
+- We did not incorporate concreteness-weighted attribute distributions; this is a departure from some norming practices and should be noted as a limitation.
+
+
+Phoneme Partitioning Pipeline (Cochlear Input)
+----------------------------------------------
+To create an auditory input analogous to Samer’s sparse orthography, we built a slot-coded phoneme representation.
+
+Input format.
+- Each word is encoded as 10 phoneme slots × 40 features = 400 dimensions (10-hot: one active feature per slot; padding for words with fewer than 10 phonemes). This preserves sparsity and structural similarity to the reference model’s 4-slot orthography.
+
+Processing steps.
+- Phoneme sequences were aligned (MFA) and converted into slot-coded vectors.
+- Each vector is L2-normalized and globally scaled via an auto-calibration (TARGET_INPUT_NORM, default 0.25) to match the reference model’s effective input drive.
+- Vectors are stored per word as .npy in audio_phonemes/Cochlear_Input_Vectors/.
+
+
+Model Architecture and Provenance (Relative to Samer’s Model)
+-------------------------------------------------------------
+We closely follow the dynamics of Samer Nour Eddine’s predictive coding model (PredictiveCoding_Model.py), with explicit adaptations. A line-by-line mapping is provided in Predictive_Coding_Model_Aligned/CODE_COMPARISON.txt.
+
+Copied structure (1:1 logic).
+- Layer hierarchy and state slots [state, tdR, tdB, PE]
+- Epsilon-guarded multiplicative updates; reconstruction order
+- Weight normalization scheme; state initialization; epsilon guards
+
+Adaptations (ours).
+- Audio layer replaces orth layer (10-slot phoneme input)
+- GPU tensors and batching for speed
+- Precision scaling on audio PE (clean vs noisy) derived from measured cosine similarity (clean=1.0, vocoded=0.575 → w_noisy=1.21 with dampening=0.5)
+- Adaptive momentum: 0.7 during input (stability), 0.3 during blanks/ISI (fast decay to low baseline)
+- Semantic PE normalization: scale semantic PE by (3715 / sem_dim) to match reference magnitudes given our larger semantic space (20k vs 3.7k)
+- Context clamp exposed as a parameter (reference clamps only in top-down mode)
+
+
+Experimental Design (Priming, N400)
+-----------------------------------
+- Design: 2×2 factorial — Identity (same/different) × Clarity (clean/noisy).
+- Timeline per trial: Prime (20 iterations) → ISI blanks (5) → Target (20) → Post-target blanks (5).
+- N400 metric: sum(lexical PE) + scaled sum(semantic PE); window iterations 2–11 of target (~300–500 ms analog).
+- Outputs: 5 figures (all conditions, same-only, different-only, bars, accuracy) and simulation_results.csv with traces.
+
+
+Weighting and Precision
+-----------------------
+We model perceptual difficulty of vocoded speech via precision scaling:
+- Measured clean–vocoded cosine similarity = 0.575 → dissimilarity = 0.425.
+- Precision weights: w_clean = 1.0; w_noisy = 1 + 0.5 × 0.425 ≈ 1.21 (dampening set to 0.5 to moderate PE inflation).
+- Noise injection is optional; both noise and precision scaling are disabled in SAMER_MODE=True (reference-aligned baseline).
+
+
+Deviations and Limitations
+--------------------------
+- No concreteness-weighted attribute distributions (departure from some norming practices).
+- Larger semantic space; normalized PE accordingly.
+- Added adaptive momentum for stability and ISI baseline control.
+- Added precision/noise manipulations for clarity conditions.
+
+
+Winding Roads / Iterative Choices (brief)
+-----------------------------------------
+- N400 metric: tested mean vs sum; settled on sum with semantic scaling to match reference magnitude.
+- Stability: EPSILON2 tweak increased oscillations; replaced with adaptive momentum (0.7 input / 0.3 blanks).
+- Input scaling: tuned TARGET_INPUT_NORM (0.5 → 0.25) but relied on semantic scaling for final magnitude control.
+- Context clamp: exposed as parameter; default off for natural dynamics (reference clamps only in top-down mode).
+
+
+Reproducibility and Files
+-------------------------
+- Semantic features: semantics_alignment/category_prompts/output/all_words_model_input.json
+- Cochlear inputs: audio_phonemes/Cochlear_Input_Vectors/*.npy
+- Code provenance: Predictive_Coding_Model_Aligned/CODE_COMPARISON.txt (line-by-line mapping to Samer)
+- Main scripts: Predictive_Coding_Model_Aligned/run_simulation.py, pc_model_gpu.py, analysis.py
+- Outputs: results_aligned/ (5 PNGs + CSV)
+
+
