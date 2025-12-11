@@ -32,6 +32,7 @@ Predictive_Coding_Model_Aligned/
 ├── pc_model_gpu.py          # Core predictive coding model (GPU-accelerated)
 ├── run_simulation.py        # Main simulation script
 ├── analysis.py              # Results visualization and export
+├── CODE_COMPARISON.txt      # Line-by-line provenance vs. Samer's reference model
 ├── results_aligned/         # Output directory (created automatically)
 │   ├── simulation_results.csv
 │   ├── n400_timecourse_all.png
@@ -68,6 +69,10 @@ Predictive_Coding_Model_Aligned/
   - Recognition accuracy by clarity
 - Prints summary statistics to console
 - Exports trial-level CSV with full traces
+
+**`CODE_COMPARISON.txt`**
+- Detailed, line-numbered provenance vs. Samer’s `PredictiveCoding_Model.py`
+- Marks copied vs. adapted vs. new blocks, with reasons for changes
 
 ---
 

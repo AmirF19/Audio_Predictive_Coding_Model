@@ -1,0 +1,74 @@
+Comparison: Our aligned model vs Samer’s reference model
+-------------------------------------------------------
+Files compared:
+- Our file: Predictive_Coding_Model_Aligned/pc_model_gpu.py (aligned GPU version)
+- Samer’s file: samer_model/PredictiveCoding_Model.py (reference)
+
+Legend:
+- “Copied” = logic/structure matches Samer with minimal adaptation (e.g., renaming orth→audio)
+- “Reworked” = same core idea but modified (e.g., added momentum, precision)
+- “New” = not present in Samer’s code
+
+
+Detailed Line Mapping (ours vs Samer)
+-------------------------------------
+Our file: pc_model_gpu.py (lines as of current commit)
+Samer file: samer_model/PredictiveCoding_Model.py
+
+1) Device selection
+   - Ours: get_device() lines 63-71 — New (no analog in Samer)
+
+2) Class init and hyperparameters
+   - Ours: __init__ lines 121-176 — Reworked
+     * EPSILON1/EPSILON2: copied (Samer lines 23-24)
+     * Momentum (MOMENTUM_INPUT=0.7, MOMENTUM_BLANK=0.3): New
+     * GPU tensors; frequency bias retained (Samer sets lexicon.frequency)
+
+3) Weight construction
+   - Ours: _build_weights lines 181-236 — Copied/Adapted
+   - Samer: define_weights lines 82-110
+   - Changes: audio A_to_L replaces orth O_to_L; frequency bias masked to audio > 0; otherwise identical normalization and transposes
+
+4) State initialization
+   - Ours: reset_state lines 244-312 — Copied/Adapted
+   - Samer: define_statespace lines 69-80
+   - Changes: audio replaces orth; otherwise same uniform init, ctx NaNs, lex/sem biases zero
+
+5) Epsilon guards
+   - Ours: _eps_div/_eps_mul lines 317-334 — Copied
+   - Samer: eps_div/eps_mul lines ~112-115
+
+6) Core dynamics (one iteration)
+   - Ours: run_one_iteration lines 340-512 — Reworked
+   - Samer: run_one_iteration lines 111-160
+   - Copied structure: PE = state/tdR, tdB = tdR/state, update terms, reconstruction order
+   - Changes (ours):
+       * Audio layer (10-slot phoneme) replaces orth layer
+       * Precision scaling on audio PE (lines ~375-379) — New
+       * Adaptive momentum (lex lines ~417-424; sem ~444-452; ctx ~476-502) — New
+       * Adaptive momentum blank vs input (lines ~330-336) — New
+       * ctx_clamp parameter (lines ~491-494) — Exposes clamping; Samer only clamps in top-down mode
+
+7) N400 metric
+   - Ours: get_total_lexsem_error lines 517-549 — Reworked
+   - Samer: get_summary total_lexsem_err (get_summary.py line ~43)
+   - Change: semantic PE scaled by (3715 / sem_dim) to normalize larger feature space
+
+8) Batched processing
+   - Ours: BatchedAuditoryPCModelGPU lines 590-699 — New (no analog in Samer)
+
+9) Precision weighting helper
+   - In run_simulation.py (not in Samer) — New
+
+10) Momentum helper
+   - New (not in Samer)
+
+11) Input modality
+   - Samer: 4-letter slot-coded orthography (104 dims, 4-hot)
+   - Ours: 10-slot phoneme input (400 dims, 10-hot)
+
+Summary of provenance
+- Copied: weight normalization, state init, epsilon guards, update/reconstruction order
+- Reworked: run_one_iteration (audio, precision scaling, adaptive momentum, ctx clamp param, semantic PE normalization), N400 metric scaling
+- New: GPU tensors, batching class, momentum parameters, precision weighting helper, semantic normalization, phoneme input
+

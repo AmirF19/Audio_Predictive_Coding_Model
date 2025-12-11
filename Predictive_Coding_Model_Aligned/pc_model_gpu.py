@@ -79,6 +79,18 @@ class AuditoryPCModelGPU:
     """
     Main predictive coding model class - handles the hierarchical processing.
     
+    # Origin note:
+    # This class mirrors Samer Nour Eddine's Simulation dynamics (PredictiveCoding_Model.py):
+    # - Same 4-layer hierarchy and state/tdR/tdB/PE slots
+    # - Same epsilon-guarded multiplicative updates
+    # Adaptations (ours):
+    # - Audio layer replaces orthographic layer (10-slot phoneme input)
+    # - GPU tensors instead of numpy arrays
+    # - Adaptive momentum to prevent oscillations / speed decay
+    # - Optional precision scaling (clean vs noisy)
+    # - Semantic PE normalization (feature-count scaling)
+    # - Batched processing helper
+
     STRUCTURE:
         Each layer has 4 things stored in statespace[layer][index]:
             [0] = state (ST): what's currently active
@@ -171,6 +183,7 @@ class AuditoryPCModelGPU:
         Build all the connection weights between layers.
         
         This normalization scheme is a bit weird but following Samer's approach exactly:
+        (Reference: Samer PredictiveCoding_Model.py define_weights, lines ~82-110)
         
         For each connection (e.g. Audio→Lexical):
         1. Stack the connection matrix with an identity matrix: [W, I]
@@ -198,6 +211,7 @@ class AuditoryPCModelGPU:
         self.weights = {}
         
         # ---- AUDIO → LEXICAL ----
+        # Samer analog: O_to_L; here adapted to audio (phoneme slots)
         # Which phoneme features predict which words?
         # Transpose so rows=words, cols=audio_features
         A = self.audio_matrix.T  # (n_words, audio_dim)
@@ -263,6 +277,7 @@ class AuditoryPCModelGPU:
         
         Everything starts as uniform distributions: ones / n_units
         This means initially all words/features are equally likely.
+        (Reference: Samer define_statespace, lines ~69-80)
         
         Biases (index [2]) start at zero - they'll build up from top-down signals.
         Context layer is special: only has state, no reconstruction/bias/PE.
@@ -307,6 +322,7 @@ class AuditoryPCModelGPU:
         
         Prevents divide-by-zero when y gets too small.
         EPSILON1 = 0.005 (from Samer's model)
+        (Reference: Samer eps_div, lines ~112-115)
         """
         return x / torch.clamp(y, min=self.EPSILON1)
     
@@ -317,6 +333,7 @@ class AuditoryPCModelGPU:
         Prevents x from collapsing to exactly zero (would kill all signal).
         EPSILON2 = 0.0001 (from Samer's model)
         Basically adds a tiny floor to keep things alive.
+        (Reference: Samer eps_mul, lines ~112-115)
         """
         return torch.clamp(x, min=self.EPSILON2) * y
     
@@ -329,6 +346,13 @@ class AuditoryPCModelGPU:
         """
         Run one iteration of the model (one time step).
         
+        Structure follows Samer's run_one_iteration (PredictiveCoding_Model.py):
+        - Same ordering: clamp input -> PE_audio -> lexical update -> PE_lex -> semantic update -> PE_sem -> context update -> reconstructions.
+        Additions (ours):
+        - Precision scaling on audio PE (clean vs noisy)
+        - Adaptive momentum (stability, fast ISI decay)
+        - Audio layer replaces orthographic layer
+        (Reference: Samer run_one_iteration, lines ~111-160)
         BASIC FLOW:
             1. Clamp audio to input (bottom-up mode)
             2. Compute prediction error at audio layer  
@@ -514,6 +538,9 @@ class AuditoryPCModelGPU:
         Returns:
             N400 value for each trial in the batch
         """
+        # NOTE: Samer uses raw sums (no scaling). We scale semantic PE to account
+        # for larger feature space so magnitudes are comparable.
+        # Reference: Samer get_summary total_lexsem_err, lines ~43 in get_summary.py
         SAMER_N_SEMANTIC_FEATURES = 3715  # From his model
         
         # Sum all lexical PEs
