@@ -22,8 +22,8 @@ LAYERS:
         Gets bottom-up from audio, sends top-down predictions back
         
     Semantic: 
-        Distributed semantic features (we have ~20k features!)
-        TODO: Check if this many features causes issues vs Samer's ~3700
+        Distributed semantic features (we have ~20k features)
+        TODO: Check if this many features causes issues vs Samer's
         
     Context (top): 
         High-level concepts

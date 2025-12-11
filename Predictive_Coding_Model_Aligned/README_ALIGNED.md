@@ -2,7 +2,7 @@
 
 ## Overview
 
-This directory contains a GPU-accelerated implementation of a hierarchical predictive coding model for auditory word recognition and N400 priming experiments. The implementation is aligned with Samer Nour Eddine's reference model (2024) with documented adaptations for auditory input.
+This directory contains an implementation of a hierarchical predictive coding model for auditory word recognition and N400 priming experiments. The implementation is aligned with Samer Nour Eddine's model (2024) with documented adaptations for auditory input.
 
 ## Quick Start
 
@@ -129,11 +129,11 @@ Audio Layer (phoneme features)
 
 ### What Matches Exactly
 
-✅ **State initialization**: Uniform distributions, zero biases  
-✅ **Weight construction**: Normalized block matrices, frequency bias  
-✅ **Update dynamics**: Epsilon-guarded multiplicative updates  
-✅ **Reconstruction order**: Bottom-up PE → State update → Top-down prediction  
-✅ **Epsilon values**: EPSILON1=0.005, EPSILON2=0.0001  
+**State initialization**: Uniform distributions, zero biases  
+**Weight construction**: Normalized block matrices, frequency bias  
+**Update dynamics**: Epsilon-guarded multiplicative updates  
+**Reconstruction order**: Bottom-up PE → State update → Top-down prediction  
+**Epsilon values**: EPSILON1=0.005, EPSILON2=0.0001  
 
 ### Documented Adaptations
 
@@ -168,7 +168,7 @@ Audio Layer (phoneme features)
 
 - **Location**: Lines 502-509 in `pc_model_gpu.py`
 - **Formula**: `semantic_PE × (3715 / 20533)`
-- **Rationale**: Our semantic space (20,533 features) is 5.5× larger than reference (3,715). Without normalization, semantic PE dominates. Scaling brings N400 peaks to reference range (~400).
+- **Rationale**: Our semantic space (20,533 features). Without normalization, semantic PE dominates. Scaling brings N400 peaks to reference range (~400).
 
 ---
 
@@ -276,7 +276,7 @@ Plot saved to: results_aligned/n400_results.png
 - **Different/clean**: N400 peak ~300-400
 - **Different/noisy**: N400 peak ~600-800
 
-These magnitudes match the reference model's range and are biologically plausible when interpreted as normalized PE.
+These magnitudes should match the reference model's range and are biologically plausible when interpreted as normalized PE.
 
 ---
 
@@ -327,33 +327,23 @@ These magnitudes match the reference model's range and are biologically plausibl
 
 | Aspect | Reference (Samer 2024) | Current Implementation |
 |--------|----------------------|------------------------|
-| **Input modality** | Orthographic (4-hot) | Auditory (5-hot) |
-| **Input dims** | 104 | 400 |
+| **Input modality** | Orthographic (4-hot) | Auditory (10-hot) |
+| **Input dims** | 104 | 444 |
 | **Lexicon size** | 1568 words | 829 words |
 | **Semantic features** | 3,715 | 20,533 |
-| **Weight construction** | ✅ Matched | ✅ Matched |
-| **State updates** | ✅ Matched | ✅ Matched |
-| **Epsilon guards** | ✅ Matched | ✅ Matched |
-| **Frequency bias** | ✅ Matched | ✅ Matched |
+| **Weight construction** | Matched | Matched |
+| **State updates** | Matched | Matched |
+| **Epsilon guards** | Matched | Matched |
+| **Frequency bias** | Matched | Matched |
 | **N400 formula** | sum(lex PE + sem PE) | sum(lex PE + 0.181×sem PE) |
-| **Precision scaling** | N/A | ⭐ Added (for noisy) |
+| **Precision scaling** | N/A | Added (for noisy) |
 | **Context clamp** | Optional | Optional (off by default) |
-
----
-
-## Citation
-
-If using this implementation, please cite:
-
-1. **Reference model**: Samer Nour Eddine's predictive coding model (2024)
-2. **Cochlear processing**: Our auditory feature extraction pipeline
-3. **Semantic features**: LLaMA-derived semantic representations
 
 ---
 
 ## Contact & Support
 
-For questions about the implementation or experimental design, contact the lab.
+Will update at a later time
 
 **Last updated**: December 2025
 
