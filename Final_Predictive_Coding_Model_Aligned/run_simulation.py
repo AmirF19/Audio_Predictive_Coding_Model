@@ -59,19 +59,19 @@ APPLY_NOISE = False if SAMER_MODE else True
 # Structure: 10 slots × 40 features = 400 dims (vs original model: 4 slots × 26 letters = 104 dims)
 
 INPUT_SCALE = 1.0
-AUTO_SCALE_INPUT = False     #(When set to False, the peaks for the same condition are basically double compared to True. Visually, it looks like the model performs as expected, but 2x the magnitude? Maybe False, INPUT_SCALE = 0.5 is the optimal config?)
+AUTO_SCALE_INPUT = True     #(When set to False, the peaks for the same condition are basically double compared to True. Visually, it looks like the model performs as expected, but 2x the magnitude? Maybe False, INPUT_SCALE = 0.5 is the optimal config?)
 TARGET_INPUT_NORM = 2.00  # (Don't touch, this was in Samer's original model)
 """
 AUTO_SCALE_INPUT set to False:
 
 N400 by Condition:
-  same/noisy: mean=40.42, peak=194.58, peak_iter=25.0
+  same/noisy: mean=40.00, peak=185.17, peak_iter=25.1
   same/clear: mean=38.63, peak=139.81, peak_iter=25.0
-  different/noisy: mean=585.79, peak=934.37, peak_iter=28.0
+  different/noisy: mean=558.18, peak=902.05, peak_iter=28.0
   different/clear: mean=368.78, peak=639.60, peak_iter=27.4
 
 Recognition Accuracy:
-  noisy: 85.7%
+  noisy: 81.4%
   clear: 98.6%
 
 Output if we set AUTO_SCALE_INPUT to True:

@@ -42,36 +42,26 @@ word2vec-google-news-300/
 # Logs
 *.log
 
-# Model results (generated output)
-Predictive_Coding_Model_Aligned/results_aligned/
-Predictive_Coding_Model/results_samer/
-**/results_*/*.csv
-**/results_*/*.png
+# Block everything by default
+*
 
-# Development/debug files (remove from tracking)
-**/debug_*.py
-**/diagnose_*.py
-**/test_*.py
-**/validate_*.py
-**/skipped_pairs_report.py
-**/MODEL_COMPARISON.md
-**/HANDOFF_SUMMARY.md
-**/cochlear_analysis.txt
+# Allow only specific files and directories
+!README.md
+!Final_Predictive_Coding_Model_Aligned/
+!experimental_pairs/
+!audio_phonemes/
+!semantics_alignment/
+!my_800_words.csv
+!semantic_validator.py
+!noise_quantifier.py
+!SUBTLEX_frequency_importer.py
+!MFA_input_prep.py
+!CONCS_FEATS_concstats_brm.txt
+!.gitignore
 
-# Old/unused model files
-**/audio_hcp_model*.py
-**/pc_model_samer.py
-
-# Generated analysis outputs
-**/chat_gpt_output*/
-**/gpt51_*/
-**/llama_*/
-**/temp_validator.py
-**/run_temperature_validation.py
-**/rerun_all_models.py
-
-# Statistics and validation files
-**/*statistics*.txt
-**/*validation_results*.csv
-**/*_validator.py
+# Allow all files in allowed directories
+!Final_Predictive_Coding_Model_Aligned/**
+!experimental_pairs/**
+!audio_phonemes/**
+!semantics_alignment/**
 
