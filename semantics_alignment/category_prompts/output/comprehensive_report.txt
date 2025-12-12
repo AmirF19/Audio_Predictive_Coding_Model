@@ -1,0 +1,154 @@
+======================================================================
+COMPREHENSIVE VALIDATION REPORT
+McRae Feature Generation - Optimal Strategy Results
+======================================================================
+
+STEP 1: CATEGORY-SPECIFIC PROMPT RESULTS
+----------------------------------------------------------------------
+Words tested: 99
+Mean F1: 0.7136
+
+Per-category results (sorted by F1):
+  FRUIT                (n= 5): 0.8081 [OK]
+  BIRD                 (n= 4): 0.7975 [OK]
+  ANIMAL               (n=11): 0.7871 [OK]
+  VEGETABLE            (n= 4): 0.7851 [OK]
+  WEAPON               (n= 6): 0.7675 [OK]
+  FOOD                 (n= 4): 0.7551 [OK]
+  MUSICAL_INSTRUMENT   (n= 4): 0.7405 [OK]
+  BUILDING             (n= 5): 0.7167 [OK]
+  FURNITURE            (n= 5): 0.7150 [OK]
+  CLOTHING             (n= 7): 0.7021 [OK]
+  INSECT               (n= 1): 0.6997 [NEEDS TEST]
+  APPLIANCE            (n= 5): 0.6969 [NEEDS TEST]
+  ROOM                 (n= 3): 0.6964 [NEEDS TEST]
+  TOOL                 (n=11): 0.6848 [NEEDS TEST]
+  CONTAINER            (n= 5): 0.6757 [NEEDS TEST]
+  STATE                (n= 1): 0.6623 [NEEDS TEST]
+  EVENT                (n= 2): 0.6602 [NEEDS TEST]
+  PLANT                (n= 5): 0.6510 [NEEDS TEST]
+  COMMUNICATION        (n= 2): 0.6509 [NEEDS TEST]
+  VEHICLE              (n= 4): 0.6503 [NEEDS TEST]
+  PERSON               (n= 2): 0.6490 [NEEDS TEST]
+  MATERIAL             (n= 1): 0.6480 [NEEDS TEST]
+  OTHER                (n= 1): 0.6398 [NEEDS TEST]
+
+
+STEP 2: GENERAL PROMPT TEST (Underperforming Categories)
+----------------------------------------------------------------------
+Words tested: 44
+Categories tested: INSECT, APPLIANCE, ROOM, TOOL, CONTAINER, STATE, 
+                   EVENT, PLANT, COMMUNICATION, VEHICLE, PERSON, 
+                   MATERIAL, OTHER
+
+Comparison (Category-Specific vs General):
+  APPLIANCE           : Cat=0.6969, Gen=0.7041 -> GENERAL WINS
+  COMMUNICATION       : Cat=0.6509, Gen=0.5880 -> CATEGORY WINS
+  CONTAINER           : Cat=0.6757, Gen=0.5642 -> CATEGORY WINS
+  EVENT               : Cat=0.6602, Gen=0.6675 -> GENERAL WINS
+  INSECT              : Cat=0.6997, Gen=0.7325 -> GENERAL WINS
+  MATERIAL            : Cat=0.6480, Gen=0.5142 -> CATEGORY WINS
+  OTHER               : Cat=0.6398, Gen=0.5893 -> CATEGORY WINS
+  PERSON              : Cat=0.6490, Gen=0.6034 -> CATEGORY WINS
+  PLANT               : Cat=0.6510, Gen=0.6421 -> CATEGORY WINS
+  ROOM                : Cat=0.6964, Gen=0.6871 -> CATEGORY WINS
+  STATE               : Cat=0.6623, Gen=0.6476 -> CATEGORY WINS
+  TOOL                : Cat=0.6848, Gen=0.6949 -> GENERAL WINS
+  VEHICLE             : Cat=0.6503, Gen=0.5919 -> CATEGORY WINS
+
+
+STEP 3: OPTIMAL STRATEGY
+----------------------------------------------------------------------
+Categories using CATEGORY-SPECIFIC: 19
+Categories using GENERAL: 4
+  -> APPLIANCE, EVENT, INSECT, TOOL
+
+
+STEP 4: FINAL COMBINED RESULTS
+----------------------------------------------------------------------
+Total words: 99
+
+Using optimal strategy per category:
+- For APPLIANCE, EVENT, INSECT, TOOL: use General prompt results
+- For all others: use Category-specific prompt results
+
+Final per-category results (using optimal strategy):
+  FRUIT                [category] (n= 5): 0.8081
+  BIRD                 [category] (n= 4): 0.7975
+  ANIMAL               [category] (n=11): 0.7871
+  VEGETABLE            [category] (n= 4): 0.7851
+  WEAPON               [category] (n= 6): 0.7675
+  FOOD                 [category] (n= 4): 0.7551
+  MUSICAL_INSTRUMENT   [category] (n= 4): 0.7405
+  INSECT               [general ] (n= 1): 0.7325
+  BUILDING             [category] (n= 5): 0.7167
+  FURNITURE            [category] (n= 5): 0.7150
+  APPLIANCE            [general ] (n= 5): 0.7041
+  CLOTHING             [category] (n= 7): 0.7021
+  TOOL                 [general ] (n=11): 0.6949
+  ROOM                 [category] (n= 3): 0.6964
+  CONTAINER            [category] (n= 5): 0.6757
+  EVENT                [general ] (n= 2): 0.6675
+  STATE                [category] (n= 1): 0.6623
+  PLANT                [category] (n= 5): 0.6510
+  COMMUNICATION        [category] (n= 2): 0.6509
+  VEHICLE              [category] (n= 4): 0.6503
+  PERSON               [category] (n= 2): 0.6490
+  MATERIAL             [category] (n= 1): 0.6480
+  OTHER                [category] (n= 1): 0.6398
+
+
+IMPROVEMENT FROM OPTIMAL STRATEGY
+----------------------------------------------------------------------
+Category-only Mean F1:  0.7136
+Optimal Strategy F1:    0.7159
+Improvement:            +0.0023
+
+Note: The improvement is modest because:
+1. Only 4 categories switched to general prompt
+2. Those categories had relatively few words (19 total)
+3. The gains were small but consistent for those categories
+
+
+TOP 10 PERFORMING WORDS (Final)
+----------------------------------------------------------------------
+  hammer          (APPLIANCE      ) F1: 0.8319  [general]
+  rifle           (WEAPON         ) F1: 0.8610  [category]
+  robin           (BIRD           ) F1: 0.8707  [category]
+  lemon           (FRUIT          ) F1: 0.8603  [category]
+  turtle          (ANIMAL         ) F1: 0.8375  [category]
+  squirrel        (ANIMAL         ) F1: 0.8242  [category]
+  cannon          (WEAPON         ) F1: 0.8222  [category]
+  apple           (FRUIT          ) F1: 0.8206  [category]
+  dagger          (WEAPON         ) F1: 0.8181  [category]
+  spider          (ANIMAL         ) F1: 0.8167  [category]
+
+BOTTOM 10 PERFORMING WORDS (Final)
+----------------------------------------------------------------------
+  pepper          (PLANT          ) F1: 0.4942  [category]
+  basket          (CONTAINER      ) F1: 0.5184  [category]
+  razor           (TOOL           ) F1: 0.5130  [general]
+  bucket          (CONTAINER      ) F1: 0.5608  [category]
+  buckle          (CLOTHING       ) F1: 0.5675  [category]
+  whistle         (EVENT          ) F1: 0.5995  [general]
+  rocker          (PERSON         ) F1: 0.5825  [category]
+  scissors        (TOOL           ) F1: 0.5982  [general]
+  candle          (TOOL           ) F1: 0.5911  [general]
+  mirror          (APPLIANCE      ) F1: 0.6283  [general]
+
+
+======================================================================
+FILES SAVED
+======================================================================
+1. category_validation_results.csv  - Step 1 per-word results
+2. general_validation_results.csv   - Step 2 per-word results
+3. category_summary.csv             - Step 1 per-category summary
+4. final_validation_results.csv     - Step 4 combined results
+5. final_summary.csv                - Step 4 per-category summary
+6. comprehensive_report.txt         - This report
+
+======================================================================
+END OF REPORT
+======================================================================
+
+

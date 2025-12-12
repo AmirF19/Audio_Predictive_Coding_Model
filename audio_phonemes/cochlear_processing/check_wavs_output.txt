@@ -1,0 +1,31 @@
+Lex words: 829
+WAV files: 1644
+Missing WAVs: 22
+['defence', 'fable', 'flavour', 'footwear', 'haddock', 'harbour', 'hour', 'message', 'moustache', 'neighbour', 'pedal', 'portion', 'pupil', 'racquet', 'report', 'result', 'rumour', 'satin', 'segment', 'sparrow', 'traitor', 'weapon']
+Extra WAVs: 837
+['defense', 'fabel', 'flavor', 'footware', 'grocer2', 'harbor', 'mustache', 'neighbor', 'padel', 'puple', 'results', 'rumor', 'sadden', 'sparrow-prefer_not_to_use', 'trader', 'vocoded_8band_abuse', 'vocoded_8band_account', 'vocoded_8band_adult', 'vocoded_8band_adverb', 'vocoded_8band_advice', 'vocoded_8band_aerial', 'vocoded_8band_affair', 'vocoded_8band_alert', 'vocoded_8band_alien', 'vocoded_8band_alley', 'vocoded_8band_amount', 'vocoded_8band_anchor', 'vocoded_8band_angel', 'vocoded_8band_anger', 'vocoded_8band_angle', 'vocoded_8band_ankle', 'vocoded_8band_answer', 'vocoded_8band_antique', 'vocoded_8band_appeal', 'vocoded_8band_apple', 'vocoded_8band_apron', 'vocoded_8band_area', 'vocoded_8band_army', 'vocoded_8band_arrow', 'vocoded_8band_artist', 'vocoded_8band_aspect', 'vocoded_8band_asphalt', 'vocoded_8band_assault', 'vocoded_8band_athlete', 'vocoded_8band_atom', 'vocoded_8band_attempt', 'vocoded_8band_audience', 'vocoded_8band_author', 'vocoded_8band_autumn', 'vocoded_8band_axle', 'vocoded_8band_baby', 'vocoded_8band_background', 'vocoded_8band_balance', 'vocoded_8band_balloon', 'vocoded_8band_ballot', 'vocoded_8band_bandage', 'vocoded_8band_banker', 'vocoded_8band_bargain', 'vocoded_8band_barrel', 'vocoded_8band_basement', 'vocoded_8band_basin', 'vocoded_8band_basket', 'vocoded_8band_battle', 'vocoded_8band_beauty', 'vocoded_8band_beaver', 'vocoded_8band_bedroom', 'vocoded_8band_beetle', 'vocoded_8band_belief', 'vocoded_8band_belly', 'vocoded_8band_berry', 'vocoded_8band_better', 'vocoded_8band_biscuit', 'vocoded_8band_bishop', 'vocoded_8band_blanket', 'vocoded_8band_blessing', 'vocoded_8band_blister', 'vocoded_8band_blossom', 'vocoded_8band_blunder', 'vocoded_8band_boating', 'vocoded_8band_body', 'vocoded_8band_bonus', 'vocoded_8band_border', 'vocoded_8band_boredom', 'vocoded_8band_bother', 'vocoded_8band_bottle', 'vocoded_8band_bottom', 'vocoded_8band_boulder', 'vocoded_8band_bouquet', 'vocoded_8band_bracelet', 'vocoded_8band_brandy', 'vocoded_8band_breakfast', 'vocoded_8band_brilliant', 'vocoded_8band_bristle', 'vocoded_8band_brother', 'vocoded_8band_bubble', 'vocoded_8band_bucket', 'vocoded_8band_buckle', 'vocoded_8band_budget', 'vocoded_8band_builder', 'vocoded_8band_bullet', 'vocoded_8band_bunny', 'vocoded_8band_burner', 'vocoded_8band_butcher', 'vocoded_8band_butter', 'vocoded_8band_button', 'vocoded_8band_buyer', 'vocoded_8band_cabbage', 'vocoded_8band_cabin', 'vocoded_8band_cable', 'vocoded_8band_cafe', 'vocoded_8band_canal', 'vocoded_8band_cancer', 'vocoded_8band_candle', 'vocoded_8band_candy', 'vocoded_8band_cannon', 'vocoded_8band_canteen', 'vocoded_8band_capsule', 'vocoded_8band_captain', 'vocoded_8band_carbon', 'vocoded_8band_career', 'vocoded_8band_carol', 'vocoded_8band_carpet', 'vocoded_8band_carrot', 'vocoded_8band_casket', 'vocoded_8band_cattle', 'vocoded_8band_ceiling', 'vocoded_8band_cellar', 'vocoded_8band_cement', 'vocoded_8band_center', 'vocoded_8band_cereal', 'vocoded_8band_challenge', 'vocoded_8band_champion', 'vocoded_8band_channel', 'vocoded_8band_chaos', 'vocoded_8band_chapel', 'vocoded_8band_cherry', 'vocoded_8band_chestnut', 'vocoded_8band_chicken', 'vocoded_8band_childhood', 'vocoded_8band_children', 'vocoded_8band_chilly', 'vocoded_8band_chimney', 'vocoded_8band_china', 'vocoded_8band_chipmunk', 'vocoded_8band_chisel', 'vocoded_8band_choir', 'vocoded_8band_christmas', 'vocoded_8band_chuckle', 'vocoded_8band_cider', 'vocoded_8band_cigar', 'vocoded_8band_circle', 'vocoded_8band_circus', 'vocoded_8band_city', 'vocoded_8band_closer', 'vocoded_8band_closet', 'vocoded_8band_clothing', 'vocoded_8band_clover', 'vocoded_8band_cocktail', 'vocoded_8band_coffee', 'vocoded_8band_coffin', 'vocoded_8band_collar', 'vocoded_8band_college', 'vocoded_8band_colonel', 'vocoded_8band_column', 'vocoded_8band_combine', 'vocoded_8band_comfort', 'vocoded_8band_command', 'vocoded_8band_common', 'vocoded_8band_compact', 'vocoded_8band_concept', 'vocoded_8band_concern', 'vocoded_8band_concert', 'vocoded_8band_concrete', 'vocoded_8band_conflict', 'vocoded_8band_conscience', 'vocoded_8band_constant', 'vocoded_8band_contact', 'vocoded_8band_content', 'vocoded_8band_contents', 'vocoded_8band_context', 'vocoded_8band_contract', 'vocoded_8band_control', 'vocoded_8band_convent', 'vocoded_8band_copper', 'vocoded_8band_corner', 'vocoded_8band_costume', 'vocoded_8band_cottage', 'vocoded_8band_cotton', 'vocoded_8band_council', 'vocoded_8band_country', 'vocoded_8band_courage', 'vocoded_8band_cousin', 'vocoded_8band_cover', 'vocoded_8band_cowboy', 'vocoded_8band_cradle', 'vocoded_8band_creature', 'vocoded_8band_crisis', 'vocoded_8band_cruiser', 'vocoded_8band_crystal', 'vocoded_8band_culture']
+
+Alt-candidate hits:
+  country: FOUND country  .wav
+  defence: FOUND defense.wav
+  fable: FOUND fabel.wav
+  flavour: FOUND flavor.wav
+  footwear: FOUND footware.wav
+  haddock: MISSING
+  harbour: FOUND harbor.wav
+  hour: MISSING
+  message: MISSING
+  moustache: FOUND mustache.wav
+  neighbour: FOUND neighbor.wav
+  pedal: FOUND petal.wav
+  portion: MISSING
+  pupil: MISSING
+  racquet: MISSING
+  report: MISSING
+  result: MISSING
+  rumour: MISSING
+  satin: MISSING
+  segment: MISSING
+  sparrow: MISSING
+  traitor: MISSING
+  weapon: MISSING

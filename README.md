@@ -1,10 +1,10 @@
 # Predictive Coding Model of Audio Input & N400
 
-A hierarchical predictive computational model simulating the N400 ERP component during auditory word recognition.
+A hierarchical predictive coding model simulating the N400 response during auditory word recognition.
 
 ## Overview
 
-This project implements a predictive coding model adapted from Nour Eddine et al. (2024) for auditory priming experiments. The model simulates how the brain processes spoken words and generates prediction errors that correspond to the N400 ERP component.
+This project implements a predictive coding model adapted from Nour Eddine et al. (2024) for auditory priming experiments. The model simulates how the brain processes spoken words and generates prediction errors that correspond to the N400 ERP component response.
 
 ### Research Question
 
@@ -13,8 +13,8 @@ Can a predictive coding model explain the pattern of N400 responses in auditory 
 ### Key Findings
 
 The model successfully demonstrates:
-- **Repetition priming** reduces N400 response (Same word: lowest prediction error)
-- **Semantic mismatch** increases N400 response (Different words: higher prediction error)
+- **Repetition priming** reduces N400 (Same word: lowest prediction error)
+- **Semantic mismatch** increases N400 (Different words: higher prediction error)
 - **Noise disrupts priming** (Degraded speech abolishes the N400 difference across conditions)
 - **Similar > Dissimilar**: Semantically similar words show slightly higher N400 than dissimilar words, possibly due to lexical competition
 

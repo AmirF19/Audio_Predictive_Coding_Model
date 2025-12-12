@@ -48,3 +48,30 @@ Predictive_Coding_Model/results_samer/
 **/results_*/*.csv
 **/results_*/*.png
 
+# Development/debug files (remove from tracking)
+**/debug_*.py
+**/diagnose_*.py
+**/test_*.py
+**/validate_*.py
+**/skipped_pairs_report.py
+**/MODEL_COMPARISON.md
+**/HANDOFF_SUMMARY.md
+**/cochlear_analysis.txt
+
+# Old/unused model files
+**/audio_hcp_model*.py
+**/pc_model_samer.py
+
+# Generated analysis outputs
+**/chat_gpt_output*/
+**/gpt51_*/
+**/llama_*/
+**/temp_validator.py
+**/run_temperature_validation.py
+**/rerun_all_models.py
+
+# Statistics and validation files
+**/*statistics*.txt
+**/*validation_results*.csv
+**/*_validator.py
+
