@@ -1,4 +1,4 @@
-# Core dependencies for GPU-Accelerated Auditory N400 Predictive Coding Model
+# Core dependencies for Auditory N400 Predictive Coding Model
 # Install with: pip install -r requirements.txt
 
 # Deep learning framework (GPU-accelerated)
