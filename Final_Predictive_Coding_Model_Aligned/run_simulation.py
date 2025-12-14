@@ -54,6 +54,13 @@ USE_CONCEPT_CLAMP = False
 APPLY_FREQUENCY_BIAS = True
 APPLY_NOISE = False if SAMER_MODE else True
 
+# NOISE CONFIGURATION:
+# Number of random words to mix with target (Samer's recommendation)
+# Empirically calibrated to match vocoded speech degradation
+# Cosine similarity analysis showed N=2 matches target similarity of 0.575
+# N=2: target contributes 33.3%, similarity = 0.604
+NOISE_MIX_LEVEL = 2  # Empirically calibrated (cosine similarity = 0.604)
+
 # INPUTS
 #Cochlear vectors are 10-hot (10 phoneme slots)
 # Structure: 10 slots × 40 features = 400 dims (vs original model: 4 slots × 26 letters = 104 dims)
@@ -89,32 +96,66 @@ Recognition Accuracy:
 
 def calibrate_input_scale(vectors, target_norm=2.0, eps=1e-6):
     """
-    Calibrate global input scaling to match Samer's model's drive.
+    Figure out how much to scale our inputs to match Samer's model.
     
-    MOTIVATION:
-        Samer's model uses 4-hot orthographic input with L2 norm ~2.
-        Our cochlear vectors are 10-hot.
-        We compute a scaling factor to match the target norm.
+    His model: 4-letter slots (4-hot encoding) with L2 norm around 2.0
+    Our model: 10 phoneme slots (10-hot encoding) with different magnitude
     
-    Args:
-        vectors: Iterable of audio vectors
-        target_norm: Desired mean L2 norm (2.0 matches reference)
-        eps: Minimum norm to avoid division by zero
-    
-    Returns:
-        scale: Multiplicative factor to apply to all inputs
+    We calculate a scaling factor so our input magnitudes match his.
+    This keeps the model dynamics comparable.
     """
+    # Calculate L2 norm for each vector
     norms = []
     for vec in vectors:
         norm = np.linalg.norm(vec)
-        if norm > eps:
+        if norm > eps:  # Skip near-zero vectors
             norms.append(norm)
     
     if len(norms) == 0:
-        return 1.0
+        return 1.0  # Safety fallback
     
+    # Scale factor to hit target mean norm
     mean_norm = np.mean(norms)
     return target_norm / mean_norm
+
+
+def create_noisy_input(target_vec, all_vectors, target_word, n_mixes=5):
+    """
+    Noise implementation following Samer's recommendation (personal communication).
+    
+    Mix the target word's phoneme vector with N random non-target vectors.
+    This creates genuine ambiguity instead of our old Gaussian approach that 
+    was accidentally making things crisper by boosting some features.
+    
+    HOW IT WORKS:
+    - If n_mixes = 5: we average target + 5 random words = 6 total vectors
+    - Each vector contributes equally (1/6 ≈ 16.7%)
+    - Target gets same weight as each random word (true averaging, not weighted)
+    
+    We tested N from 1-100 to find the sweet spot:
+    - N=2: matches empirical vocoded speech (cosine similarity 0.604 vs target 0.575)
+    - N=3: slightly more degraded but still realistic
+    - N=40: minimum to get 0% recognition (probably too extreme)
+    """
+    # Grab all words except the target itself
+    available_words = [w for w in all_vectors.keys() if w != target_word]
+    
+    # Safety check in case we don't have enough words
+    if len(available_words) < n_mixes:
+        n_mixes = len(available_words)
+    
+    if n_mixes == 0:
+        return target_vec  # Can't mix with nothing, just return clean target
+    
+    # Pick N random words to mix with
+    random_words = np.random.choice(available_words, n_mixes, replace=False)
+    
+    # Stack target + random vectors and average them all together
+    random_vecs = [all_vectors[w] for w in random_words]
+    all_vecs = [target_vec] + random_vecs
+    mixed_vec = np.mean(all_vecs, axis=0)
+    
+    return mixed_vec
 
 # DATA
 def load_lexicon():
@@ -396,13 +437,13 @@ def run_experiment():
         device=device
     )
     
-    # 6: Load Experimental Pairs (Loveboat style)
+    # 6: Load Experimental Pairs
     pairs = load_experimental_pairs(EXPERIMENTAL_PAIRS_FILE, lexicon, set(lexicon))
     
     if not pairs:
         raise ValueError(f"No experimental pairs found in {EXPERIMENTAL_PAIRS_FILE}. Please ensure the experimental pairs file exists and contains valid data.")
     
-    # RUN (Forest RUN) SIMULATION
+    # RUN SIMULATION
     print(f"\nRunning {len(pairs)} trials in batches of {BATCH_SIZE}...")
     all_results = []
     
@@ -424,30 +465,14 @@ def run_experiment():
             
             noisy_processed = False
             
-            # README:APPLIES NOISE WHEN SAMER=_MODE IS SET TO FALSE: inject noise into noisy targets 
+            # SAMER'S RECOMMENDED NOISE: Mix target with random non-target vectors
             if APPLY_NOISE and pair['clarity'] == 'noisy' and target_vec is not None:
-                target_vec = target_vec.copy()
-                active_mask = target_vec > 0
-                
-                if np.any(active_mask):
-                    # Normalize
-                    norm_t = np.linalg.norm(target_vec)
-                    if norm_t > 0:
-                        target_vec = target_vec / norm_t
-                    
-                    # DEFAULT NOISE (RECOGNITION ACCURACY TURNS TO: noisy: 68.6% & clear: 89.7%; it seems like we get the N400 responses that we're looking for)
-                    base_noise = 1.0
-                    
-                    # PROPORTIONAL NOISE (PROPORTIONAL TO COSINE DISSIMILARITY (0.575 similarity -> 0.425 dissimilarity) noisy = 76.3% & clear = 89.7%; This produces very similar N400 responses for the same and different condition pairs)
-                    # base_noise = 1.0 * (1 - 0.575)  # = 0.425
-                    
-                    target_vec[active_mask] = (
-                        target_vec[active_mask] +
-                        np.random.randn(active_mask.sum()).astype(np.float32) * 
-                        base_noise
-                    )
-                    target_vec = np.maximum(target_vec, 0)  # Clip negative values
-                
+                target_vec = create_noisy_input(
+                    target_vec=target_vec,
+                    all_vectors=audio_vectors,
+                    target_word=pair['target'],
+                    n_mixes=NOISE_MIX_LEVEL
+                )
                 target_vecs[:, i] = target_vec * INPUT_SCALE
                 noisy_processed = True
             
@@ -525,10 +550,11 @@ def run_experiment():
     
     print_summary(df)
     save_results(df, OUTPUT_DIR)
-    plot_results(df, OUTPUT_DIR, 
-                num_iters=NUM_ITERS, 
-                blanks_before=BLANKS_BEFORE_TARGET, 
-                target_iters=TARGET_ITERS)
+    plot_results(df, OUTPUT_DIR,
+                num_iters=NUM_ITERS,
+                blanks_before=BLANKS_BEFORE_TARGET,
+                target_iters=TARGET_ITERS,
+                post_target_blanks=POST_TARGET_BLANKS)
     
     return df
 

@@ -27,14 +27,15 @@ def print_summary(df):
             print(f"  {clarity}: {acc:.1f}%")
 
 
-def plot_results(df, output_dir, num_iters=20, blanks_before=5, target_iters=20):
+def plot_results(df, output_dir, num_iters=20, blanks_before=5, target_iters=20, post_target_blanks=5):
 
     fig1, ax = plt.subplots(1, 1, figsize=(8, 6))
     
     target_start = num_iters + blanks_before
     target_end = target_start + target_iters
+    post_end = target_end + post_target_blanks
     plot_start = target_start - blanks_before  # Include pre-target baseline
-    plot_end = target_end
+    plot_end = post_end  # Include post-target settling
 
     condition_styles = [
         (('same', 'clear'), {'color': 'blue', 'linestyle': '-', 'label': 'Same/Clear'}),
@@ -58,7 +59,7 @@ def plot_results(df, output_dir, num_iters=20, blanks_before=5, target_iters=20)
             mean_trace = seg.mean(axis=0)
             
             x_vals = np.arange(-blanks_before, seg.shape[1] - blanks_before)
-            ax.plot(x_vals, mean_trace, color=style['color'], 
+            ax.plot(x_vals, mean_trace, color=style['color'],
                    linestyle=style['linestyle'], linewidth=2, label=style['label'])
             max_peak = max(max_peak, mean_trace.max())
 
@@ -66,7 +67,7 @@ def plot_results(df, output_dir, num_iters=20, blanks_before=5, target_iters=20)
     ax.set_xlabel('Iterations from Target Onset', fontsize=12)
     ax.set_ylabel('Lexico-Semantic PE (N400)', fontsize=12)
     ax.set_title('N400 Timecourse: All Conditions', fontsize=13, fontweight='bold')
-    ax.set_xlim(-blanks_before, target_iters)
+    ax.set_xlim(-blanks_before, target_iters + post_target_blanks)
     ax.set_ylim(0, max_peak * 1.1 if max_peak > 0 else 1)
     ax.legend(loc='upper right', framealpha=0.9)
     ax.grid(alpha=0.3)
@@ -78,7 +79,7 @@ def plot_results(df, output_dir, num_iters=20, blanks_before=5, target_iters=20)
     plt.close()
     
     fig1b, ax = plt.subplots(1, 1, figsize=(8, 6))
-    
+
     max_peak_same = 0
     for clarity in ['clear', 'noisy']:
         subset = df[(df['condition'] == 'same') & (df['clarity'] == clarity)]
@@ -88,22 +89,22 @@ def plot_results(df, output_dir, num_iters=20, blanks_before=5, target_iters=20)
                 traces = np.array([list(map(float, t.split(','))) for t in subset['trace_lexsem_err']])
             else:
                 traces = np.array([t if isinstance(t, list) else list(t) for t in subset['trace_lexsem_err']])
-            
+
             seg = traces[:, plot_start:plot_end]
             mean_trace = seg.mean(axis=0)
             x_vals = np.arange(-blanks_before, seg.shape[1] - blanks_before)
-            
+
             linestyle = '-' if clarity == 'clear' else '--'
             label = f'Same/{clarity.capitalize()}'
-            ax.plot(x_vals, mean_trace, color='blue', linestyle=linestyle, 
+            ax.plot(x_vals, mean_trace, color='blue', linestyle=linestyle,
                    linewidth=2.5, label=label)
             max_peak_same = max(max_peak_same, mean_trace.max())
-    
+
     ax.axvline(0, color='gray', linestyle=':', alpha=0.5, linewidth=1)
     ax.set_xlabel('Iterations from Target Onset', fontsize=12)
     ax.set_ylabel('Lexico-Semantic PE (N400)', fontsize=12)
     ax.set_title('N400 Timecourse: Same Condition', fontsize=13, fontweight='bold')
-    ax.set_xlim(-blanks_before, target_iters)
+    ax.set_xlim(-blanks_before, target_iters + post_target_blanks)
     ax.set_ylim(0, max_peak_same * 1.1 if max_peak_same > 0 else 1)
     ax.legend(loc='upper right', framealpha=0.9)
     ax.grid(alpha=0.3)
@@ -141,7 +142,7 @@ def plot_results(df, output_dir, num_iters=20, blanks_before=5, target_iters=20)
     ax.set_xlabel('Iterations from Target Onset', fontsize=12)
     ax.set_ylabel('Lexico-Semantic PE (N400)', fontsize=12)
     ax.set_title('N400 Timecourse: Different Condition', fontsize=13, fontweight='bold')
-    ax.set_xlim(-blanks_before, target_iters)
+    ax.set_xlim(-blanks_before, target_iters + post_target_blanks)
     ax.set_ylim(0, max_peak_diff * 1.1 if max_peak_diff > 0 else 1)
     ax.legend(loc='upper right', framealpha=0.9)
     ax.grid(alpha=0.3)
